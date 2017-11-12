@@ -2,7 +2,7 @@ import cmath
 import pandas as pd
 import requests
 
-username = 'User 19'
+user_id = 19
 
 dt = pd.read_csv('data.csv', index_col=0, sep=', ', engine='python')
 ctx = pd.read_csv('context.csv', index_col=0, sep=', ', engine='python')
@@ -92,14 +92,8 @@ def get_recommendation(u, data, context):
         return movie
     return None
 
-user_id = -1
-for index in range(0, len(dt.axes[0])):
-    if dt.axes[0][index] == username:
-        user_id = index
-        break
-
-film_rates = predicted_film_rates(user_id, dt)
-recommendation = get_recommendation(user_id, dt, ctx)
+film_rates = predicted_film_rates(user_id - 1, dt)
+recommendation = get_recommendation(user_id - 1, dt, ctx)
 
 print(film_rates)
 print(recommendation)
@@ -110,11 +104,11 @@ request_body['user'] = user_id
 
 request_body['1'] = {}
 for (movie_name, movie_rating) in film_rates.items():
-    request_body['1'][movie_name] = movie_rating.real
+    request_body['1'][movie_name.lower()] = movie_rating.real
 
 if recommendation:
     request_body['2'] = {
-        recommendation['name']: recommendation['rating'].real
+        recommendation['name'].lower(): recommendation['rating'].real
     }
 
 
